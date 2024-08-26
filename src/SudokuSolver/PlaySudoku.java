@@ -8,23 +8,65 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
+/**
+ * Represents the main GUI for playing Sudoku.
+ * 
+ * This class extends {@link JFrame} and provides the user interface for playing Sudoku, including puzzle generation, 
+ * solving, and scoring. It allows the user to select the difficulty level, generate a new puzzle, check the solution, 
+ * and view the elapsed time and score. It also provides functionality to return to the main menu.
+ * 
+ * The Sudoku grid is displayed using {@link JTextField} components arranged in a 9x9 grid. The user can input their 
+ * solution into these fields. The game tracks the elapsed time from puzzle generation to solution check and saves 
+ * the score to a database upon successful completion.
+ */
 public class PlaySudoku extends JFrame {
+    /** 2D array of {@link JTextField} components representing the Sudoku board. */
     public JTextField[][] Board;
+    
+    /** The time when the puzzle generation started. */
     private long startTime = 0;
+    
+    /** Indicates whether a puzzle has been generated. */
     private boolean puzzleGenerated = false;
+    
+    /** The username of the player. */
     public String username;
+    
+    /** Label displaying the difficulty level of the current puzzle. */
     private JLabel puzzleIdLabel;
+    
+    /** The {@link SudokuGenerator} used to generate puzzles. */
     private SudokuGenerator generator;
+    
+    /** The {@link SudokuSolver} used to solve puzzles. */
     public SudokuSolver solver;
+    
+    /** 2D array representing the generated puzzle. */
     private int[][] puzzle;
+    
+    /** 2D array representing the solution to the puzzle. */
     private int[][] solution;
+    
+    /** The player's score. */
     private int score = 0;
-    // Declare selectedOption as a class member variable
+    
+    /** The selected difficulty option. */
     private String selectedOption;
+    
+    /** The current difficulty level of the puzzle. */
     private int currentDifficulty;
+    
+    /** The time taken to solve the puzzle. */
     private long timeTaken;
+    
+    /** The elapsed time displayed by the timer. */
     public long elapsedTime = 0;
 
+    /**
+     * Constructs a {@code PlaySudoku} frame with the specified username.
+     *
+     * @param username the username of the player
+     */
     public PlaySudoku(String username) {
         this.username = username;
         setTitle("Play Sudoku");
@@ -39,6 +81,7 @@ public class PlaySudoku extends JFrame {
         puzzleIdLabel.setFont(new Font("Arial", Font.BOLD, 12));
         getContentPane().add(puzzleIdLabel, BorderLayout.NORTH);
 
+        // Initialize the board with text fields
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 JTextField textField = new JTextField();
@@ -74,10 +117,13 @@ public class PlaySudoku extends JFrame {
             }
         }
 
-        // Buttons Solve, Reset, and Check
+        // Initialize buttons and timer
         JButton backButton = new JButton("Back");
+        styleButton(backButton);
         JButton generate = new JButton("Generate");
+        styleButton(generate);
         JButton check = new JButton("Check");
+        styleButton(check);
         JPanel ButtonPanel = new JPanel();
 
         // Timer Option
@@ -96,7 +142,7 @@ public class PlaySudoku extends JFrame {
         });
         timer.start();
 
-        // Back Option
+        // Back Button
         backButton.setToolTipText("Back to Main Menu");
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -104,9 +150,9 @@ public class PlaySudoku extends JFrame {
                 new MainMenu(username); // Open Main Menu
             }
         });
-        ButtonPanel.add(backButton);
         ButtonPanel.add(generate);
         ButtonPanel.add(check);
+        ButtonPanel.add(backButton);
 
         generator = new SudokuGenerator();
         solver = new SudokuSolver();
@@ -162,14 +208,14 @@ public class PlaySudoku extends JFrame {
                 }
             }
         });
+
         // Add an ActionListener to the "Check" button
         check.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (puzzleGenerated) {
                     // Stop the timer
                     long elapsedTime = 0;
-                    if (startTime != 0) 
-                    {
+                    if (startTime != 0) {
                         elapsedTime = System.currentTimeMillis() - startTime;
                         startTime = 0;
                     }
@@ -223,8 +269,7 @@ public class PlaySudoku extends JFrame {
                                 score = 30;
                             }
 
-                            // Display the congratulations message with the score, timer, and difficulty
-                            // level
+                            // Display the congratulations message with the score, timer, and difficulty level
                             JOptionPane.showMessageDialog(PlaySudoku.this,
                                     "Congratulations!\nScore: " + score +
                                             "\nTime taken: " + message +
@@ -272,6 +317,27 @@ public class PlaySudoku extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
+    
+    private void styleButton(JButton button) {
+        // Set button properties
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.setFont(new Font("Arial", Font.BOLD, 16));
+
+        // Define colors and border radius
+        Color buttonColor = new Color(51, 153, 255); // Steel Blue color
+        Color borderColor = new Color(51, 153, 255); // Same color for a seamless look
+        int borderRadius = 30;
+
+        // Apply custom UI
+        button.setUI(new RoundedButtonUI(buttonColor, borderColor, borderRadius));
+    }
+
+    /**
+     * Clears the background color of all cells on the board.
+     * This method is used to reset any highlights or colors applied to the cells.
+     */
     private void clearCellHighlights() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {

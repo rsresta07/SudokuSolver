@@ -6,11 +6,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 
+/**
+ * Represents the main user interface for solving Sudoku puzzles.
+ * 
+ * This class extends {@link JFrame} to provide a GUI for interacting with Sudoku puzzles, including functionalities to 
+ * load and save puzzles, solve the puzzle, and reset the board. It features a grid-based board for entering Sudoku numbers,
+ * buttons for solving and resetting the puzzle, and menu options for loading and saving puzzles.
+ */
 public class SudokuFrame extends JFrame {
+    /** The 2D array of {@link JTextField} representing the Sudoku board. */
     public JTextField[][] Board;
 
+    /**
+     * Constructs a {@code SudokuFrame} instance with the given username.
+     * Initializes the GUI components, sets up event listeners, and creates the board for the Sudoku puzzle.
+     *
+     * @param username the username of the current player
+     */
     SudokuFrame(String username) {
-        setTitle("SudokuSolver");
+        setTitle("Sudoku Solver");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
 
@@ -27,7 +41,7 @@ public class SudokuFrame extends JFrame {
         aboutItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(SudokuFrame.this,
-                        "SudokuSolver v1.0\n\nThis program allows you to solve Sudoku puzzles.\n\nCreated by Rabin Dangol & Chiran Rai (May 2023)",
+                        "SudokuSolver v1.0\n\nThis program allows you to solve Sudoku puzzles.\n\nCreated by Rameshwor Shrestha and Salin Manandhar",
                         "About", JOptionPane.INFORMATION_MESSAGE);
             }
         });
@@ -54,14 +68,17 @@ public class SudokuFrame extends JFrame {
                 } else {
                     textField.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, Color.BLACK));
                 }
-
             }
         }
-        // Buttons Solve and Reset and Back
-        JButton backButton = new JButton("Back"); // Replace "back.png" with your own image file
-        JPanel ButtonPanel = new JPanel();
+
+        // Buttons Solve, Reset, and Back
+        JButton backButton = new JButton("Back");
+        styleButton(backButton);
         JButton resetButton = new JButton("Reset");
+        styleButton(resetButton);
         JButton solveButton = new JButton("Solve");
+        styleButton(solveButton);
+        JPanel ButtonPanel = new JPanel();
         backButton.setToolTipText("Back to Main Menu");
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -80,7 +97,6 @@ public class SudokuFrame extends JFrame {
                 }
             }
         });
-        ButtonPanel.add(solveButton);
         resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (int i = 0; i < 9; i++) {
@@ -102,7 +118,7 @@ public class SudokuFrame extends JFrame {
         setLocation(centerX, centerY);
         setVisible(true);
 
-        // loading puzzle file in txt format only
+        // Loading puzzle file in txt format only
         loadItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -130,7 +146,8 @@ public class SudokuFrame extends JFrame {
                 }
             }
         });
-        // Saving solved puzzle as a file.
+
+        // Saving solved puzzle as a file
         saveItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -164,6 +181,15 @@ public class SudokuFrame extends JFrame {
         });
     }
 
+    /**
+     * Solves the Sudoku puzzle based on the current state of the board.
+     * 
+     * This method copies the current values from the text fields into a 2D integer array, validates the puzzle, and attempts
+     * to solve it using the {@link SudokuSolver}. If the puzzle is successfully solved, the solution is updated back into the
+     * text fields with a delay to visualize the solving process.
+     * 
+     * @return {@code true} if the puzzle is successfully solved, {@code false} otherwise
+     */
     private boolean solveSudoku() {
         int[][] puzzle = new int[9][9];
         // Copy values from text fields to puzzle array
@@ -198,8 +224,8 @@ public class SudokuFrame extends JFrame {
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
                     Board[i][j].setText(Integer.toString(puzzle[i][j]));
-                     // Delay to visualize the solving process
-                     try {
+                    // Delay to visualize the solving process
+                    try {
                         Thread.sleep(30); // Adjust the delay time as needed
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
@@ -211,9 +237,20 @@ public class SudokuFrame extends JFrame {
             return false;
         }
     }
+    
+    private void styleButton(JButton button) {
+        // Set button properties
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.setFont(new Font("Arial", Font.BOLD, 16));
 
-    // public static void main(String[] args) {
-    // new SudokuFrame(null);
-    // }
+        // Define colors and border radius
+        Color buttonColor = new Color(51, 153, 255); // Steel Blue color
+        Color borderColor = new Color(51, 153, 255); // Same color for a seamless look
+        int borderRadius = 30;
 
+        // Apply custom UI
+        button.setUI(new RoundedButtonUI(buttonColor, borderColor, borderRadius));
+    }
 }

@@ -4,28 +4,34 @@ This is a Java-based Graphical User Interface (GUI) Sudoku Solver. It provides a
 
 ## Features
 
-- A user-friendly GUI that allows input of the Sudoku puzzle
-- The ability to solve any valid Sudoku puzzle
-- Provides a clear message if the puzzle is unsolvable
+- A user-friendly GUI that allows input of the Sudoku puzzle.
+- The ability to solve any valid Sudoku puzzle.
+- Provides a clear message if the puzzle is unsolvable.
+- The ability to save and load puzzles from a file.
+- Support for different levels of difficulty.
+
+## Algorithm
+- The backtracking Algorithm is used for the project.
 
 ## Installation
 
 - Clone or download the project from GitHub.
 - Open the project in your preferred Java Integrated Development Environment (IDE).
+- Add jar files to the classpath if needed.
+- Create the database using the provided SQL file.
 - Build and run the project from your IDE.
 
 ## Usage
 - Run the project.
+- Login or Register as a user.
 - Enter the values in the empty cells of the Sudoku puzzle in the GUI.
 - Click on the "Solve" button to solve the puzzle.
 - If the puzzle is solvable, the solved puzzle will be displayed in the GUI.
-- If the puzzle is unsolvable or has multiple solutions, a clear message will be displayed in the GUI.
+- A clear message will be displayed in the GUI if the puzzle is unsolvable or has multiple solutions.
 
 ## Future Enhancements
 - Improve the algorithm to make it more efficient and faster
-- Add the ability to save and load puzzles from a file
 - Add a feature to allow users to highlight cells that contain the same value
-- Add support for different levels of difficulty
 
 ## Contributing
-Contributions are welcome! If you would like to contribute, please fork the repository and create a pull request.
+Contributions are welcome! Please fork the repository and create a pull request if you want to contribute.

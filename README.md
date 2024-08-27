@@ -109,7 +109,7 @@ return false;
 ```
 If we've tried all numbers and none work, we return false to trigger backtracking.
 
-The isSafe method (lines 157-159) checks if a number can be placed in a cell without violating Sudoku rules:
+The `isSafe` method (lines 157-159) checks if a number can be placed in a cell without violating Sudoku rules:
 ```java
 private boolean isSafe(int row, int col, int num) {
     return !usedInRow(row, num) && !usedInColumn(col, num) && !usedInBox(row - row % 3, col - col % 3, num);
@@ -139,11 +139,11 @@ private void removeCells(int difficulty) {
 }
 ```
 This method:
-1.	Randomly selects cells to remove.
-2.	Removes a cell's value temporarily.
-3.	Checks if the puzzle still has a unique solution.
-4.	If not, it restores the value; if yes, it keeps the cell empty.
-5.	Continues until the desired number of cells are removed.
+- Randomly selects cells to remove.
+- Removes a cell's value temporarily.
+- Check if the puzzle still has a unique solution.
+- If not, it restores the value; if yes, it keeps the cell empty.
+- Continues until the desired number of cells are removed.
 
 
 

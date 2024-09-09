@@ -9,27 +9,29 @@ import java.io.*;
 /**
  * Represents the main user interface for solving Sudoku puzzles.
  * 
- * This class extends {@link JFrame} to provide a GUI for interacting with Sudoku puzzles, including functionalities to 
+ * This class extends {@link JPanel} to provide a GUI for interacting with Sudoku puzzles, including functionalities to 
  * load and save puzzles, solve the puzzle, and reset the board. It features a grid-based board for entering Sudoku numbers,
  * buttons for solving and resetting the puzzle, and menu options for loading and saving puzzles.
  */
-public class SudokuFrame extends JFrame {
+public class SudokuFrame extends JPanel {
     /** The 2D array of {@link JTextField} representing the Sudoku board. */
     public JTextField[][] Board;
+    private JMenuBar menuBar; // Menu bar for SudokuFrame
+    private App app; // Reference to the App instance
 
     /**
      * Constructs a {@code SudokuFrame} instance with the given username.
      * Initializes the GUI components, sets up event listeners, and creates the board for the Sudoku puzzle.
      *
+     * @param app the App instance
      * @param username the username of the current player
      */
-    SudokuFrame(String username) {
-        setTitle("Sudoku Solver");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setResizable(false);
+    SudokuFrame(App app, String username) {
+        this.app = app; // Store the App instance
+        setLayout(new BorderLayout());
+        menuBar = new JMenuBar(); // Initialize the menu bar
 
         // File Addition
-        JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenuItem loadItem = new JMenuItem("Load Puzzle");
         JMenuItem saveItem = new JMenuItem("Save Puzzle");
@@ -37,15 +39,15 @@ public class SudokuFrame extends JFrame {
         fileMenu.add(loadItem);
         fileMenu.add(saveItem);
         menuBar.add(fileMenu);
-        setJMenuBar(menuBar);
+
+        // About Dialog
         aboutItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(SudokuFrame.this,
+                JOptionPane.showMessageDialog(app.getMainFrame(),
                         "SudokuSolver v1.0\n\nThis program allows you to solve Sudoku puzzles.\n\nCreated by Rameshwor Shrestha and Salin Manandhar",
                         "About", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        fileMenu.add(aboutItem);
 
         JPanel BoardPanel = new JPanel(new GridLayout(9, 9, 0, 0));
         Board = new JTextField[9][9];
@@ -71,114 +73,116 @@ public class SudokuFrame extends JFrame {
             }
         }
 
-        // Buttons Solve, Reset, and Back
+        // Buttons for solving, resetting, and returning to the main menu
         JButton backButton = new JButton("Back");
         styleButton(backButton);
         JButton resetButton = new JButton("Reset");
         styleButton(resetButton);
         JButton solveButton = new JButton("Solve");
         styleButton(solveButton);
-        JPanel ButtonPanel = new JPanel();
-        backButton.setToolTipText("Back to Main Menu");
-        backButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose(); // Close SudokuSolver UI
-                new MainMenu(username); // Open Main Menu
+        
+        // Action for Back button: return to Main Menu
+        backButton.addActionListener(e -> {
+            CardLayout layout = (CardLayout) app.getMainFrame().getContentPane().getLayout();
+            layout.show(app.getMainFrame().getContentPane(), "mainMenu");
+            app.showOtherPanel("mainMenu"); // Ensure menu bar is removed when going back to main menu
+        });
+        
+        // Action for Solve button: solve Sudoku
+        solveButton.addActionListener(e -> {
+            if (solveSudoku()) {
+                JOptionPane.showMessageDialog(app.getMainFrame(), "Puzzle solved!", "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(app.getMainFrame(), "Puzzle is unsolvable.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
-        solveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (solveSudoku()) {
-                    JOptionPane.showMessageDialog(SudokuFrame.this, "Puzzle solved!", "Success",
+        
+        // Action for Reset button: clear board
+        resetButton.addActionListener(e -> {
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    Board[i][j].setText("");
+                }
+            }
+        });
+        
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(solveButton);
+        buttonPanel.add(resetButton);
+        buttonPanel.add(backButton);
+        
+        // Add panels to the layout
+        add(BoardPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        // File loading
+        loadItem.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showOpenDialog(app.getMainFrame());
+            if (result == JFileChooser.APPROVE_OPTION) {
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()));
+                    String line;
+                    int row = 0;
+                    while ((line = reader.readLine()) != null && row < 9) {
+                        String[] values = line.trim().split("\\s+");
+                        for (int col = 0; col < 9 && col < values.length; col++) {
+                            String value = values[col];
+                            if (!value.equals(".")) {
+                                Board[row][col].setText(value);
+                            }
+                        }
+                        row++;
+                    }
+                    reader.close();
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(app.getMainFrame(), "Error loading file: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // File saving
+        saveItem.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showSaveDialog(app.getMainFrame());
+            if (result == JFileChooser.APPROVE_OPTION) {
+                try {
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(fileChooser.getSelectedFile()));
+                    for (int i = 0; i < 9; i++) {
+                        for (int j = 0; j < 9; j++) {
+                            String value = Board[i][j].getText().trim();
+                            if (value.isEmpty()) {
+                                writer.write(".");
+                            } else {
+                                writer.write(value);
+                            }
+                            if (j < 8) {
+                                writer.write(" ");
+                            }
+                        }
+                        writer.newLine();
+                    }
+                    writer.close();
+                    JOptionPane.showMessageDialog(app.getMainFrame(), "Puzzle saved successfully!", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(SudokuFrame.this, "Puzzle is unsolvable.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(app.getMainFrame(), "Error saving file: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-        resetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                for (int i = 0; i < 9; i++) {
-                    for (int j = 0; j < 9; j++) {
-                        Board[i][j].setText("");
-                    }
-                }
-            }
-        });
-        ButtonPanel.add(solveButton, BorderLayout.CENTER);
-        ButtonPanel.add(resetButton, BorderLayout.EAST);
-        ButtonPanel.add(backButton, BorderLayout.WEST);
-        getContentPane().add(BoardPanel, BorderLayout.CENTER);
-        getContentPane().add(ButtonPanel, BorderLayout.SOUTH);
-        pack();
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int centerX = (int) ((screenSize.getWidth() - getWidth()) / 2);
-        int centerY = (int) ((screenSize.getHeight() - getHeight()) / 2);
-        setLocation(centerX, centerY);
-        setVisible(true);
+    }
 
-        // Loading puzzle file in txt format only
-        loadItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                int result = fileChooser.showOpenDialog(SudokuFrame.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()));
-                        String line;
-                        int row = 0;
-                        while ((line = reader.readLine()) != null && row < 9) {
-                            String[] values = line.trim().split("\\s+");
-                            for (int col = 0; col < 9 && col < values.length; col++) {
-                                String value = values[col];
-                                if (!value.equals(".")) {
-                                    Board[row][col].setText(value);
-                                }
-                            }
-                            row++;
-                        }
-                        reader.close();
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(SudokuFrame.this, "Error loading file: " + ex.getMessage(),
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        });
-
-        // Saving solved puzzle as a file
-        saveItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                int result = fileChooser.showSaveDialog(SudokuFrame.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new FileWriter(fileChooser.getSelectedFile()));
-                        for (int i = 0; i < 9; i++) {
-                            for (int j = 0; j < 9; j++) {
-                                String value = Board[i][j].getText().trim();
-                                if (value.isEmpty()) {
-                                    writer.write(".");
-                                } else {
-                                    writer.write(value);
-                                }
-                                if (j < 8) {
-                                    writer.write(" ");
-                                }
-                            }
-                            writer.newLine();
-                        }
-                        writer.close();
-                        JOptionPane.showMessageDialog(SudokuFrame.this, "Puzzle saved successfully!", "Success",
-                                JOptionPane.INFORMATION_MESSAGE);
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(SudokuFrame.this, "Error saving file: " + ex.getMessage(),
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        });
+    /**
+     * Returns the menu bar of this SudokuFrame.
+     *
+     * @return the menu bar of this SudokuFrame
+     */
+    public JMenuBar getMenuBar() {
+        return menuBar;
     }
 
     /**
@@ -192,6 +196,7 @@ public class SudokuFrame extends JFrame {
      */
     private boolean solveSudoku() {
         int[][] puzzle = new int[9][9];
+        
         // Copy values from text fields to puzzle array
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -201,10 +206,12 @@ public class SudokuFrame extends JFrame {
                 }
             }
         }
+        
         // Validate puzzle
         if (!ValidatePuzzle.validate(puzzle)) {
             return false;
         }
+        
         // Check if puzzle is empty
         boolean isEmpty = true;
         for (int i = 0; i < 9; i++) {
@@ -215,10 +222,12 @@ public class SudokuFrame extends JFrame {
                 }
             }
         }
+        
         if (isEmpty) {
             JOptionPane.showMessageDialog(SudokuFrame.this, "Puzzle is empty.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+        
         if (SudokuSolver.solve(puzzle)) {
             // Copy values from puzzle array back to text fields
             for (int i = 0; i < 9; i++) {

@@ -1,3 +1,4 @@
+// Leaderboard.java
 package SudokuSolver;
 
 import javax.swing.*;
@@ -13,45 +14,38 @@ import java.util.Vector;
 
 /**
  * The {@code Leaderboard} class is a Java Swing application designed to display a leaderboard
- * for a Sudoku game. It allows users to select a difficulty level and view the rankings of
- * players based on their performance.
- * <p>
- * The leaderboard includes columns for rank, username, number of puzzles solved, total score,
- * and the shortest time taken. Users can select the difficulty level from a combo box, and
- * click the "Show" button to refresh the leaderboard based on the selected difficulty.
- * </p>
+ * for a Sudoku game.
  */
-public class Leaderboard extends JFrame {
+public class Leaderboard extends JPanel {
     private JComboBox<String> difficultyComboBox;
     private JTable leaderboardTable;
     private DefaultTableModel tableModel;
+    private JFrame mainFrame; // Reference to the main frame
 
     /**
      * Constructs a new {@code Leaderboard} instance and initializes the UI components.
      * Sets up the leaderboard panel, difficulty selection panel, and the leaderboard table.
+     * 
+     * @param mainFrame the main application frame for navigation
      */
-    public Leaderboard() {
-        setTitle("Leaderboard");
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setResizable(false);
-
-        // Create leaderboard panel
-        JPanel leaderboardPanel = new JPanel(new BorderLayout());
-        leaderboardPanel.setBorder(new EmptyBorder(30, 30, 30, 30));
+    public Leaderboard(JFrame mainFrame) {
+        this.mainFrame = mainFrame; // Set the reference to the main frame
+        setLayout(new BorderLayout());
+        setBorder(new EmptyBorder(30, 30, 30, 30));
 
         // Create difficulty selection panel
         JPanel selectionPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5); // Add padding around components
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        
+
         // Create and add the label
         JLabel difficultyLabel = new JLabel("Difficulty:");
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0;
         selectionPanel.add(difficultyLabel, gbc);
-        
+
         // Create and add the dropdown
         difficultyComboBox = new JComboBox<>();
         difficultyComboBox.addItem("All");
@@ -70,12 +64,28 @@ public class Leaderboard extends JFrame {
         gbc.insets = new Insets(5, 10, 5, 5); // Add more spacing on the right of the dropdown
         selectionPanel.add(showButton, gbc);
 
+        // Create and add the Back button
+        JButton backButton = new JButton("Back");
+        styleButton(backButton);
+        gbc.gridx = 3;
+        gbc.insets = new Insets(5, 10, 5, 5); // Add spacing on the right of the Show button
+        selectionPanel.add(backButton, gbc);
+
         // Add action listener to the Show button
         showButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Retrieve and display the leaderboard based on the selected difficulty
                 String selectedDifficulty = (String) difficultyComboBox.getSelectedItem();
                 showLeaderboard(selectedDifficulty);
+            }
+        });
+
+        // Add action listener to the Back button
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Return to Main Menu
+                CardLayout layout = (CardLayout) mainFrame.getContentPane().getLayout();
+                layout.show(mainFrame.getContentPane(), "mainMenu");
             }
         });
 
@@ -94,23 +104,12 @@ public class Leaderboard extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(leaderboardTable);
 
-        leaderboardPanel.add(selectionPanel, BorderLayout.NORTH);
-        leaderboardPanel.add(scrollPane, BorderLayout.CENTER);
-
-        getContentPane().add(leaderboardPanel);
-        pack();
-        setPreferredSize(new Dimension(500, 400));
-        setLocationRelativeTo(null);
-        setVisible(true);
+        add(selectionPanel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
     }
 
     /**
      * Retrieves and displays the leaderboard data based on the selected difficulty level.
-     * <p>
-     * This method queries the database for leaderboard data and updates the table model
-     * with the results. The leaderboard data includes rank, username, number of puzzles solved,
-     * total score, and the shortest time taken.
-     * </p>
      * 
      * @param difficulty the selected difficulty level for filtering the leaderboard data
      */
@@ -170,19 +169,5 @@ public class Leaderboard extends JFrame {
 
         // Apply custom UI
         button.setUI(new RoundedButtonUI(buttonColor, borderColor, borderRadius));
-    }
-
-    /**
-     * The entry point of the {@code Leaderboard} application. Initializes and displays the
-     * {@code Leaderboard} frame.
-     * 
-     * @param args command line arguments (not used)
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new Leaderboard();
-            }
-        });
     }
 }

@@ -11,7 +11,7 @@ import java.sql.SQLException;
 /**
  * Represents the main GUI for playing Sudoku.
  * 
- * This class extends {@link JFrame} and provides the user interface for playing Sudoku, including puzzle generation, 
+ * This class extends {@link JPanel} and provides the user interface for playing Sudoku, including puzzle generation, 
  * solving, and scoring. It allows the user to select the difficulty level, generate a new puzzle, check the solution, 
  * and view the elapsed time and score. It also provides functionality to return to the main menu.
  * 
@@ -19,9 +19,9 @@ import java.sql.SQLException;
  * solution into these fields. The game tracks the elapsed time from puzzle generation to solution check and saves 
  * the score to a database upon successful completion.
  */
-public class PlaySudoku extends JFrame {
+public class PlaySudoku extends JPanel {
     /** 2D array of {@link JTextField} components representing the Sudoku board. */
-    public JTextField[][] Board;
+    private JTextField[][] Board;
     
     /** The time when the puzzle generation started. */
     private long startTime = 0;
@@ -30,7 +30,7 @@ public class PlaySudoku extends JFrame {
     private boolean puzzleGenerated = false;
     
     /** The username of the player. */
-    public String username;
+    private String username;
     
     /** Label displaying the difficulty level of the current puzzle. */
     private JLabel puzzleIdLabel;
@@ -39,7 +39,7 @@ public class PlaySudoku extends JFrame {
     private SudokuGenerator generator;
     
     /** The {@link SudokuSolver} used to solve puzzles. */
-    public SudokuSolver solver;
+    private SudokuSolver solver;
     
     /** 2D array representing the generated puzzle. */
     private int[][] puzzle;
@@ -60,18 +60,18 @@ public class PlaySudoku extends JFrame {
     private long timeTaken;
     
     /** The elapsed time displayed by the timer. */
-    public long elapsedTime = 0;
+    private long elapsedTime = 0;
 
     /**
-     * Constructs a {@code PlaySudoku} frame with the specified username.
+     * Constructs a {@code PlaySudoku} panel with the specified username and main frame.
      *
      * @param username the username of the player
+     * @param mainFrame the main frame that holds this panel
      */
-    public PlaySudoku(String username) {
+    public PlaySudoku(String username, JFrame mainFrame) {
         this.username = username;
-        setTitle("Play Sudoku");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setResizable(false);
+        setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(600, 400)); // Adjust as necessary
 
         JPanel BoardPanel = new JPanel(new GridLayout(9, 9, 0, 0));
         Board = new JTextField[9][9];
@@ -79,7 +79,7 @@ public class PlaySudoku extends JFrame {
         // Create puzzle ID label
         puzzleIdLabel = new JLabel("Difficulty Level: ");
         puzzleIdLabel.setFont(new Font("Arial", Font.BOLD, 12));
-        getContentPane().add(puzzleIdLabel, BorderLayout.NORTH);
+        add(puzzleIdLabel, BorderLayout.NORTH);
 
         // Initialize the board with text fields
         for (int i = 0; i < 9; i++) {
@@ -146,10 +146,12 @@ public class PlaySudoku extends JFrame {
         backButton.setToolTipText("Back to Main Menu");
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                dispose(); // Close PlaySudoku UI
-                new MainMenu(username); // Open Main Menu
+                // Show the main menu view using CardLayout
+                CardLayout cardLayout = (CardLayout) mainFrame.getContentPane().getLayout();
+                cardLayout.show(mainFrame.getContentPane(), "mainMenu");
             }
         });
+        
         ButtonPanel.add(generate);
         ButtonPanel.add(check);
         ButtonPanel.add(backButton);
@@ -158,56 +160,7 @@ public class PlaySudoku extends JFrame {
         solver = new SudokuSolver();
 
         // Add an ActionListener to the "Generate" button
-        generate.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Create a dialog box to choose the difficulty level
-                String[] options = { "Easy", "Medium", "Hard" };
-                selectedOption = (String) JOptionPane.showInputDialog(
-                        PlaySudoku.this,
-                        "Choose difficulty level:",
-                        "Difficulty Level",
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[0]);
-
-                if (selectedOption != null) {
-                    // Store the current difficulty level
-                    if (selectedOption.equals("Easy")) {
-                        currentDifficulty = SudokuGenerator.EASY;
-                    } else if (selectedOption.equals("Medium")) {
-                        currentDifficulty = SudokuGenerator.MEDIUM;
-                    } else {
-                        currentDifficulty = SudokuGenerator.HARD;
-                    }
-
-                    generator.generate(currentDifficulty);
-                    puzzle = generator.getPuzzle();
-                    solution = generator.getSolution();
-
-                    // Update the puzzle ID label with the chosen difficulty level
-                    puzzleIdLabel.setText("Difficulty Level: " + selectedOption);
-
-                    // Populate the UI with the puzzle data
-                    for (int i = 0; i < 9; i++) {
-                        for (int j = 0; j < 9; j++) {
-                            int value = puzzle[i][j];
-                            if (value != 0) {
-                                Board[i][j].setText(String.valueOf(value));
-                                Board[i][j].setEditable(false);
-                            } else {
-                                Board[i][j].setText("");
-                                Board[i][j].setEditable(true);
-                            }
-                        }
-                    }
-
-                    // Start the timer
-                    puzzleGenerated = true;
-                    startTime = System.currentTimeMillis();
-                }
-            }
-        });
+        generate.addActionListener(e -> generatePuzzle());
 
         // Add an ActionListener to the "Check" button
         check.addActionListener(new ActionListener() {
@@ -247,51 +200,59 @@ public class PlaySudoku extends JFrame {
                     }
 
                     if (allFilled) {
-                        // Check the solution against the user input
-                        boolean correct = true;
-                        for (int i = 0; i < 9; i++) {
-                            for (int j = 0; j < 9; j++) {
-                                String value = Board[i][j].getText();
-                                if (!value.equals(String.valueOf(solution[i][j]))) {
-                                    correct = false;
-                                    Board[i][j].setBackground(Color.RED); // Highlight incorrect cells with red background
+                        // Check if selectedOption is not null before using it
+                        if (selectedOption != null) {
+                            // Check the solution against the user input
+                            boolean correct = true;
+                            for (int i = 0; i < 9; i++) {
+                                for (int j = 0; j < 9; j++) {
+                                    String value = Board[i][j].getText();
+                                    if (!value.equals(String.valueOf(solution[i][j]))) {
+                                        correct = false;
+                                        Board[i][j].setBackground(Color.RED); // Highlight incorrect cells with red background
+                                    }
                                 }
                             }
-                        }
 
-                        if (correct) {
-                            // Calculate the score based on the difficulty level solved
-                            if (selectedOption.equals("Easy")) {
-                                score = 10;
-                            } else if (selectedOption.equals("Medium")) {
-                                score = 20;
-                            } else if (selectedOption.equals("Hard")) {
-                                score = 30;
-                            }
+                            if (correct) {
+                                // Calculate the score based on the difficulty level solved
+                                if (selectedOption.equals("Easy")) {
+                                    score = 10;
+                                } else if (selectedOption.equals("Medium")) {
+                                    score = 20;
+                                } else if (selectedOption.equals("Hard")) {
+                                    score = 30;
+                                }
 
-                            // Display the congratulations message with the score, timer, and difficulty level
-                            JOptionPane.showMessageDialog(PlaySudoku.this,
-                                    "Congratulations!\nScore: " + score +
-                                            "\nTime taken: " + message +
-                                            "\nDifficulty Level: " + selectedOption,
-                                    "Congratulations!",
-                                    JOptionPane.INFORMATION_MESSAGE);
+                                // Display the congratulations message with the score, timer, and difficulty level
+                                JOptionPane.showMessageDialog(PlaySudoku.this,
+                                        "Congratulations!\nScore: " + score +
+                                                "\nTime taken: " + message +
+                                                "\nDifficulty Level: " + selectedOption,
+                                        "Congratulations!",
+                                        JOptionPane.INFORMATION_MESSAGE);
 
-                            // Save the score in the database
-                            try {
-                                SudokuDatabase database = new SudokuDatabase();
-                                database.saveScore(username, score, (int) (timeTaken / 1000), selectedOption);
-                                database.close();
-                            } catch (SQLException ex) {
-                                ex.printStackTrace();
+                                // Save the score in the database
+                                try {
+                                    SudokuDatabase database = new SudokuDatabase();
+                                    database.saveScore(username, score, (int) (timeTaken / 1000), selectedOption);
+                                    database.close();
+                                } catch (SQLException ex) {
+                                    ex.printStackTrace();
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(PlaySudoku.this,
+                                        "Incorrect solution. Please try again.",
+                                        "Incorrect Solution",
+                                        JOptionPane.ERROR_MESSAGE);
+                                // Reset the startTime to resume the timer
+                                startTime = System.currentTimeMillis() - elapsedTime;
                             }
                         } else {
                             JOptionPane.showMessageDialog(PlaySudoku.this,
-                                    "Incorrect solution. Please try again.",
-                                    "Incorrect Solution",
-                                    JOptionPane.ERROR_MESSAGE);
-                            // Reset the startTime to resume the timer
-                            startTime = System.currentTimeMillis() - elapsedTime;
+                                    "Please select a difficulty level first.",
+                                    "Difficulty Not Selected",
+                                    JOptionPane.WARNING_MESSAGE);
                         }
                     } else {
                         JOptionPane.showMessageDialog(PlaySudoku.this,
@@ -311,13 +272,58 @@ public class PlaySudoku extends JFrame {
             }
         });
 
-        getContentPane().add(BoardPanel, BorderLayout.CENTER);
-        getContentPane().add(ButtonPanel, BorderLayout.SOUTH);
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
+        add(BoardPanel, BorderLayout.CENTER);
+        add(ButtonPanel, BorderLayout.SOUTH);
     }
-    
+
+    private void generatePuzzle() {
+        String[] options = { "Easy", "Medium", "Hard" };
+        selectedOption = (String) JOptionPane.showInputDialog(
+                PlaySudoku.this,
+                "Choose difficulty level:",
+                "Difficulty Level",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        if (selectedOption != null) {
+            currentDifficulty = getDifficultyFromOption(selectedOption);
+
+            generator.generate(currentDifficulty);
+            puzzle = generator.getPuzzle();
+            solution = generator.getSolution();
+
+            puzzleIdLabel.setText("Difficulty Level: " + selectedOption);
+            populateBoardWithPuzzle();
+            startTime = System.currentTimeMillis();
+            puzzleGenerated = true; // Set puzzle generated flag
+        }
+    }
+
+    private int getDifficultyFromOption(String option) {
+        switch (option) {
+            case "Easy":
+                return SudokuGenerator.EASY;
+            case "Medium":
+                return SudokuGenerator.MEDIUM;
+            case "Hard":
+                return SudokuGenerator.HARD;
+            default:
+                throw new IllegalArgumentException("Unknown difficulty: " + option);
+        }
+    }
+
+    private void populateBoardWithPuzzle() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                int value = puzzle[i][j];
+                Board[i][j].setText(value != 0 ? String.valueOf(value) : "");
+                Board[i][j].setEditable(value == 0);
+            }
+        }
+    }
+
     private void styleButton(JButton button) {
         // Set button properties
         button.setOpaque(false);

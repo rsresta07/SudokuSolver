@@ -55,8 +55,7 @@ public class MainMenu extends JPanel {
         JPanel menuPanel = new JPanel(new GridLayout(4, 1, 10, 10));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
-        // Create title label
-        JLabel titleLabel = new JLabel("Sudoku Solver", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Hi, " + username, SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
         menuPanel.add(titleLabel);
 

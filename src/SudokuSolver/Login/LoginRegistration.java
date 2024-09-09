@@ -24,11 +24,17 @@ public class LoginRegistration extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-
-        JLabel usernameLabel = new JLabel("Username:");
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JLabel welcomeLabel = new JLabel("Welcome to Sudoku", JLabel.CENTER);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 32)); // Increase the font size to make it bigger
+        add(welcomeLabel, gbc);
+
+        JLabel usernameLabel = new JLabel("Username:");
+        gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         add(usernameLabel, gbc);
@@ -36,34 +42,31 @@ public class LoginRegistration extends JPanel {
         JTextField usernameTextField = new JTextField();
         usernameTextField.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 1;
-        gbc.gridwidth = 2;
+        gbc.gridy = 1;
         add(usernameTextField, gbc);
 
         JLabel passwordLabel = new JLabel("Password:");
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
+        gbc.gridx=0;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         add(passwordLabel, gbc);
 
         JPasswordField passwordField = new JPasswordField();
         passwordField.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 1;
-        gbc.gridwidth = 2;
+        gbc.gridy = 2;
         add(passwordField, gbc);
 
         JButton loginButton = new JButton("Login");
         styleButton(loginButton);
         gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
+        gbc.gridy = 3;
         add(loginButton, gbc);
-
+        
         JButton registerButton = new JButton("Register");
         styleButton(registerButton);
         gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.gridwidth = 1;
+        gbc.gridy = 4;
         add(registerButton, gbc);
 
         loginButton.addActionListener(new ActionListener() {

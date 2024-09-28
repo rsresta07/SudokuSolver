@@ -7,8 +7,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import SudokuSolver.Login.LoginRegistration;
-
 public class App {
     private String username; // Store the logged-in username
     private JFrame mainFrame; // Keep a reference to the main frame

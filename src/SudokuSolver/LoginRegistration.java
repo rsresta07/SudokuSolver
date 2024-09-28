@@ -1,9 +1,7 @@
-package SudokuSolver.Login;
+package SudokuSolver;
 
 import javax.swing.*;
-import SudokuSolver.App;
-import SudokuSolver.JdbcConn;
-import SudokuSolver.RoundedButtonUI;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -95,18 +93,21 @@ public class LoginRegistration extends JPanel {
     }
 
     private void styleButton(JButton button) {
+        // Set button properties
         button.setOpaque(false);
         button.setContentAreaFilled(false);
         button.setBorderPainted(false);
         button.setFont(new Font("Arial", Font.BOLD, 16));
 
+        // Define colors and border radius
         Color buttonColor = new Color(51, 153, 255); // Steel Blue color
-        Color borderColor = new Color(51, 153, 255);
+        Color borderColor = new Color(51, 153, 255); // Same color for a seamless look
         int borderRadius = 30;
 
+        // Apply custom UI
         button.setUI(new RoundedButtonUI(buttonColor, borderColor, borderRadius));
     }
-
+    
     private boolean validateLogin(String username, String password) {
         try (Connection conn = JdbcConn.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT password FROM users WHERE username = ?")) {

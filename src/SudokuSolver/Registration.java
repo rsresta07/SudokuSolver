@@ -1,4 +1,4 @@
-package SudokuSolver.Login;
+package SudokuSolver;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,48 +1,34 @@
-package SudokuSolver;
+package Game;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 
-/**
- * Represents the main user interface for solving Sudoku puzzles.
- * 
- * This class extends {@link JPanel} to provide a GUI for interacting with Sudoku puzzles, including functionalities to 
- * load and save puzzles, solve the puzzle, and reset the board. It features a grid-based board for entering Sudoku numbers,
- * buttons for solving and resetting the puzzle, and menu options for loading and saving puzzles.
- */
 public class SudokuFrame extends JPanel {
-    /** The 2D array of {@link JTextField} representing the Sudoku board. */
+
     public JTextField[][] Board;
-    private JMenuBar menuBar; // Menu bar for SudokuFrame
-    private App app; // Reference to the App instance
+    private JMenuBar menuBar;
+    private App app;
 
-    /**
-     * Constructs a {@code SudokuFrame} instance with the given username.
-     * Initializes the GUI components, sets up event listeners, and creates the board for the Sudoku puzzle.
-     *
-     * @param app the App instance
-     * @param username the username of the current player
-     */
     SudokuFrame(App app, String username) {
-        this.app = app; // Store the App instance
+        this.app = app;
         setLayout(new BorderLayout());
-        menuBar = new JMenuBar(); // Initialize the menu bar
+        menuBar = new JMenuBar();
 
-        // File Addition
         JMenu fileMenu = new JMenu("File");
         JMenuItem loadItem = new JMenuItem("Load Puzzle");
         JMenuItem saveItem = new JMenuItem("Save Puzzle");
-        JMenuItem aboutItem = new JMenuItem("About");
+        JMenu aboutMenu = new JMenu("About");
         fileMenu.add(loadItem);
         fileMenu.add(saveItem);
         menuBar.add(fileMenu);
+        menuBar.add(aboutMenu);
 
-        // About Dialog
-        aboutItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        aboutMenu.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 JOptionPane.showMessageDialog(app.getMainFrame(),
                         "SudokuSolver v1.0\n\nThis program allows you to solve Sudoku puzzles.\n\nCreated by Rameshwor Shrestha and Salin Manandhar",
                         "About", JOptionPane.INFORMATION_MESSAGE);
@@ -60,7 +46,6 @@ public class SudokuFrame extends JPanel {
                 Board[i][j] = textField;
                 BoardPanel.add(textField);
 
-                // Add borders around each 3x3 grid
                 if (i % 3 == 2 && j % 3 == 2) {
                     textField.setBorder(BorderFactory.createMatteBorder(1, 1, 2, 2, Color.BLACK));
                 } else if (i % 3 == 2) {
@@ -73,22 +58,21 @@ public class SudokuFrame extends JPanel {
             }
         }
 
-        // Buttons for solving, resetting, and returning to the main menu
         JButton backButton = new JButton("Back");
         styleButton(backButton);
+
         JButton resetButton = new JButton("Reset");
         styleButton(resetButton);
+
         JButton solveButton = new JButton("Solve");
         styleButton(solveButton);
-        
-        // Action for Back button: return to Main Menu
+
         backButton.addActionListener(e -> {
             CardLayout layout = (CardLayout) app.getMainFrame().getContentPane().getLayout();
             layout.show(app.getMainFrame().getContentPane(), "mainMenu");
-            app.showOtherPanel("mainMenu"); // Ensure menu bar is removed when going back to main menu
+            app.showOtherPanel("mainMenu");
         });
-        
-        // Action for Solve button: solve Sudoku
+
         solveButton.addActionListener(e -> {
             if (solveSudoku()) {
                 JOptionPane.showMessageDialog(app.getMainFrame(), "Puzzle solved!", "Success",
@@ -98,8 +82,7 @@ public class SudokuFrame extends JPanel {
                         JOptionPane.ERROR_MESSAGE);
             }
         });
-        
-        // Action for Reset button: clear board
+
         resetButton.addActionListener(e -> {
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
@@ -107,17 +90,15 @@ public class SudokuFrame extends JPanel {
                 }
             }
         });
-        
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(solveButton);
         buttonPanel.add(resetButton);
         buttonPanel.add(backButton);
-        
-        // Add panels to the layout
+
         add(BoardPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // File loading
         loadItem.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             int result = fileChooser.showOpenDialog(app.getMainFrame());
@@ -144,7 +125,6 @@ public class SudokuFrame extends JPanel {
             }
         });
 
-        // File saving
         saveItem.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             int result = fileChooser.showSaveDialog(app.getMainFrame());
@@ -176,28 +156,13 @@ public class SudokuFrame extends JPanel {
         });
     }
 
-    /**
-     * Returns the menu bar of this SudokuFrame.
-     *
-     * @return the menu bar of this SudokuFrame
-     */
     public JMenuBar getMenuBar() {
         return menuBar;
     }
 
-    /**
-     * Solves the Sudoku puzzle based on the current state of the board.
-     * 
-     * This method copies the current values from the text fields into a 2D integer array, validates the puzzle, and attempts
-     * to solve it using the {@link SudokuSolver}. If the puzzle is successfully solved, the solution is updated back into the
-     * text fields with a delay to visualize the solving process.
-     * 
-     * @return {@code true} if the puzzle is successfully solved, {@code false} otherwise
-     */
     private boolean solveSudoku() {
         int[][] puzzle = new int[9][9];
-        
-        // Copy values from text fields to puzzle array
+
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 String value = Board[i][j].getText().trim();
@@ -206,13 +171,11 @@ public class SudokuFrame extends JPanel {
                 }
             }
         }
-        
-        // Validate puzzle
+
         if (!ValidatePuzzle.validate(puzzle)) {
             return false;
         }
-        
-        // Check if puzzle is empty
+
         boolean isEmpty = true;
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -222,20 +185,20 @@ public class SudokuFrame extends JPanel {
                 }
             }
         }
-        
+
         if (isEmpty) {
             JOptionPane.showMessageDialog(SudokuFrame.this, "Puzzle is empty.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        
+
         if (SudokuSolver.solve(puzzle)) {
-            // Copy values from puzzle array back to text fields
+
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
                     Board[i][j].setText(Integer.toString(puzzle[i][j]));
-                    // Delay to visualize the solving process
+
                     try {
-                        Thread.sleep(30); // Adjust the delay time as needed
+                        Thread.sleep(30);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
@@ -246,20 +209,19 @@ public class SudokuFrame extends JPanel {
             return false;
         }
     }
-    
+
     private void styleButton(JButton button) {
-        // Set button properties
+
         button.setOpaque(false);
         button.setContentAreaFilled(false);
         button.setBorderPainted(false);
         button.setFont(new Font("Arial", Font.BOLD, 16));
 
-        // Define colors and border radius
         Color buttonColor = new Color(51, 153, 255); // Steel Blue color
         Color borderColor = new Color(51, 153, 255); // Same color for a seamless look
         int borderRadius = 30;
 
-        // Apply custom UI
         button.setUI(new RoundedButtonUI(buttonColor, borderColor, borderRadius));
     }
+
 }

@@ -1,28 +1,11 @@
-/**
- * The {@code ValidatePuzzle} class provides methods to validate the correctness of a Sudoku puzzle.
- * 
- * This class ensures that the Sudoku puzzle adheres to Sudoku rules: each row, column, and 3x3 sub-grid must
- * contain unique values from 1 to 9, and values must be within the valid range.
- */
-package SudokuSolver;
+package Game;
 
 import javax.swing.JOptionPane;
 
 public class ValidatePuzzle {
-    
-    /**
-     * Validates a given Sudoku puzzle to ensure it follows Sudoku rules.
-     * 
-     * This method checks the puzzle for duplicate values in each row, column, and 3x3 sub-grid. It also verifies
-     * that all values are within the range of 1 to 9. If any rules are violated, an error message is shown to the
-     * user and the method returns {@code false}.
-     * 
-     * @param puzzle A 2D array representing the Sudoku puzzle. Each element in the array represents a cell in the
-     *               puzzle, with 0 indicating an empty cell and values 1-9 indicating filled cells.
-     * @return {@code true} if the puzzle is valid according to Sudoku rules, {@code false} otherwise.
-     */
+
     public static boolean validate(int[][] puzzle) {
-        // Check rows
+
         for (int i = 0; i < 9; i++) {
             boolean[] used = new boolean[9];
             for (int j = 0; j < 9; j++) {
@@ -46,8 +29,7 @@ public class ValidatePuzzle {
                 }
             }
         }
-        
-        // Check columns
+
         for (int j = 0; j < 9; j++) {
             boolean[] used = new boolean[9];
             for (int i = 0; i < 9; i++) {
@@ -71,8 +53,7 @@ public class ValidatePuzzle {
                 }
             }
         }
-        
-        // Check 3x3 grids
+
         for (int gridRow = 0; gridRow < 9; gridRow += 3) {
             for (int gridCol = 0; gridCol < 9; gridCol += 3) {
                 boolean[] used = new boolean[9];

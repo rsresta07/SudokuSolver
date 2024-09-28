@@ -1,4 +1,4 @@
-package SudokuSolver;
+package Game;
 
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
@@ -23,15 +23,15 @@ public class RoundedButtonUI extends BasicButtonUI {
         try {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // Paint the background
+            // background paint
             g2d.setColor(button.getModel().isArmed() ? backgroundColor.darker() : backgroundColor);
             g2d.fillRoundRect(0, 0, button.getWidth(), button.getHeight(), borderRadius, borderRadius);
 
-            // Paint the border
+            // border paint
             g2d.setColor(borderColor);
             g2d.drawRoundRect(0, 0, button.getWidth() - 1, button.getHeight() - 1, borderRadius, borderRadius);
 
-            // Paint the text
+            // text paint
             super.paint(g, c);
         } finally {
             g2d.dispose();

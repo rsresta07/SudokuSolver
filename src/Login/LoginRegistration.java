@@ -14,24 +14,24 @@ import Game.RoundedButtonUI;
 public class LoginRegistration extends JPanel {
 
     private final JFrame mainFrame;
-    private final App app;
+    private final App app; 
 
     public LoginRegistration(JFrame mainFrame, App app) {
         this.mainFrame = mainFrame;
-        this.app = app;
+        this.app = app; 
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         JLabel welcomeLabel = new JLabel("Welcome to Sudoku", JLabel.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 32)); 
         add(welcomeLabel, gbc);
 
         JLabel usernameLabel = new JLabel("Username:");
@@ -47,7 +47,7 @@ public class LoginRegistration extends JPanel {
         add(usernameTextField, gbc);
 
         JLabel passwordLabel = new JLabel("Password:");
-        gbc.gridx = 0;
+        gbc.gridx=0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         add(passwordLabel, gbc);
@@ -64,7 +64,7 @@ public class LoginRegistration extends JPanel {
         gbc.gridx = 1;
         gbc.gridy = 3;
         add(loginButton, gbc);
-
+        
         JButton registerButton = new JButton("Register");
         styleButton(registerButton);
 
@@ -77,7 +77,7 @@ public class LoginRegistration extends JPanel {
                 String username = usernameTextField.getText();
                 String password = new String(passwordField.getPassword());
                 if (validateLogin(username, password)) {
-                    app.setUsername(username);
+                    app.setUsername(username); 
                     app.showMainMenu(username);
 
                 } else {
@@ -89,7 +89,7 @@ public class LoginRegistration extends JPanel {
 
         registerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new Registration();
+                new Registration(); 
             }
         });
 
@@ -97,7 +97,7 @@ public class LoginRegistration extends JPanel {
 
     private boolean validateLogin(String username, String password) {
         try (Connection conn = JdbcConn.getConnection();
-                PreparedStatement stmt = conn.prepareStatement("SELECT password FROM users WHERE username = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT password FROM users WHERE username = ?")) {
 
             stmt.setString(1, username);
 
@@ -117,7 +117,7 @@ public class LoginRegistration extends JPanel {
     }
 
     private void styleButton(JButton button) {
-
+        
         button.setOpaque(false);
         button.setContentAreaFilled(false);
         button.setBorderPainted(false);

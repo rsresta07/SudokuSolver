@@ -10,9 +10,9 @@ import javax.swing.SwingUtilities;
 import Login.LoginRegistration;
 
 public class App {
-    private String username;
+    private String username; 
     private JFrame mainFrame;
-    private SudokuFrame sudokuFramePanel;
+    private SudokuFrame sudokuFramePanel; 
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -50,7 +50,7 @@ public class App {
         mainFrame.remove(mainFrame.getContentPane().getComponent(0));
 
         JPanel mainMenuPanel = new MainMenu(this, getUsername());
-        JPanel playSudokuPanel = new PlaySudoku(getUsername(), mainFrame);
+        JPanel playSudokuPanel = new PlaySudoku(getUsername(), mainFrame); 
         JPanel leaderboardPanel = new Leaderboard(mainFrame);
 
         sudokuFramePanel = new SudokuFrame(this, getUsername());
@@ -74,22 +74,22 @@ public class App {
     public JFrame getMainFrame() {
         return mainFrame;
     }
-
+    
     public void showSudokuFrame() {
         CardLayout layout = (CardLayout) mainFrame.getContentPane().getLayout();
         layout.show(mainFrame.getContentPane(), "sudokuSolver");
-        mainFrame.setJMenuBar(sudokuFramePanel.getMenuBar());
+        mainFrame.setJMenuBar(sudokuFramePanel.getMenuBar()); 
     }
 
     public void showOtherPanel(String panelName) {
         CardLayout layout = (CardLayout) mainFrame.getContentPane().getLayout();
 
         if (panelName.equals("login")) {
-
+            
             JPanel loginPanel = new LoginRegistration(mainFrame, this);
-
-            mainFrame.remove(mainFrame.getContentPane().getComponent(0));
-            mainFrame.add(loginPanel, "login");
+            
+            mainFrame.remove(mainFrame.getContentPane().getComponent(0)); 
+            mainFrame.add(loginPanel, "login"); 
         }
 
         layout.show(mainFrame.getContentPane(), panelName);

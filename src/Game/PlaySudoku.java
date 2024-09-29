@@ -91,7 +91,17 @@ public class PlaySudoku extends JPanel {
                 textField.addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyReleased(KeyEvent e) {
-                        checkCurrentInput();
+
+                        String input = textField.getText();
+                        if (input.length() > 1) {
+                            textField.setText(input.substring(0, 1));
+                        }
+
+                        if (e.getKeyChar() >= '1' && e.getKeyChar() <= '9') {
+                            checkCurrentInput();
+                        } else {
+                            textField.setText("");
+                        }
                     }
                 });
 
@@ -163,8 +173,10 @@ public class PlaySudoku extends JPanel {
                             hint--;
                             hintBtn.setText("Hint: " + hint);
                             filledGrid = true;
+                            checkCurrentInput();
                         }
                     }
+
 
                     if (hint == 0) {
                         hintBtn.setEnabled(false);
@@ -181,7 +193,7 @@ public class PlaySudoku extends JPanel {
 
     private void checkCurrentInput() {
         if (puzzleGenerated) {
-            clearCellHighlights();
+            
             boolean correct = true;
 
             for (int i = 0; i < 9; i++) {
@@ -212,9 +224,9 @@ public class PlaySudoku extends JPanel {
 
                                 }
                             }
-                        } else {
-                            Board[i][j].setBackground(Color.WHITE);
-                        }
+                        }// else {
+                        //     Board[i][j].setBackground(Color.WHITE);
+                        // }
                     } else {
                         correct = false;
                     }
@@ -239,6 +251,9 @@ public class PlaySudoku extends JPanel {
                 } else if (selectedOption.equals("Nightmare")) {
                     score = 50;
                 }
+
+                hintBtn.setEnabled(false);
+                disableGameBoard();
 
                 gameTimer.stop();
 

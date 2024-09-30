@@ -15,16 +15,16 @@ public class Leaderboard extends JPanel {
     private JComboBox<String> difficultyComboBox;
     private JTable leaderboardTable;
     private DefaultTableModel tableModel;
-    private JFrame mainFrame; 
+    private JFrame mainFrame;
 
     public Leaderboard(JFrame mainFrame) {
-        this.mainFrame = mainFrame; 
+        this.mainFrame = mainFrame;
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(30, 30, 30, 30));
 
         JPanel selectionPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5); 
+        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JLabel difficultyLabel = new JLabel("Difficulty:");
@@ -44,7 +44,7 @@ public class Leaderboard extends JPanel {
 
         JButton showButton = new JButton("Show");
         styleButton(showButton);
-        
+
         gbc.gridx = 2;
         gbc.weightx = 0;
         gbc.insets = new Insets(5, 10, 5, 5);
@@ -52,14 +52,14 @@ public class Leaderboard extends JPanel {
 
         JButton backButton = new JButton("Back");
         styleButton(backButton);
-        
+
         gbc.gridx = 3;
-        gbc.insets = new Insets(5, 10, 5, 5); 
+        gbc.insets = new Insets(5, 10, 5, 5);
         selectionPanel.add(backButton, gbc);
 
         showButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                
+
                 String selectedDifficulty = (String) difficultyComboBox.getSelectedItem();
                 showLeaderboard(selectedDifficulty);
             }
@@ -72,9 +72,8 @@ public class Leaderboard extends JPanel {
             }
         });
 
-       
         gbc.weightx = 1.0;
-        gbc.gridwidth = GridBagConstraints.REMAINDER; 
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
 
         tableModel = new DefaultTableModel();
         leaderboardTable = new JTable(tableModel);
@@ -124,14 +123,14 @@ public class Leaderboard extends JPanel {
     }
 
     private void styleButton(JButton button) {
-        
+
         button.setOpaque(false);
         button.setContentAreaFilled(false);
         button.setBorderPainted(false);
         button.setFont(new Font("Arial", Font.BOLD, 16));
 
-        Color buttonColor = new Color(51, 153, 255); 
-        Color borderColor = new Color(51, 153, 255); 
+        Color buttonColor = new Color(51, 153, 255);
+        Color borderColor = new Color(51, 153, 255);
         int borderRadius = 30;
 
         button.setUI(new RoundedButtonUI(buttonColor, borderColor, borderRadius));

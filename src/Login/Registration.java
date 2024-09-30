@@ -23,28 +23,27 @@ public class Registration extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        
+
         JLabel usernameLabel = new JLabel("Username:");
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         registrationPanel.add(usernameLabel, gbc);
-        
+
         JTextField usernameTextField = new JTextField();
         usernameTextField.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 1;
         gbc.gridwidth = 2;
         registrationPanel.add(usernameTextField, gbc);
 
-        
         JLabel passwordLabel = new JLabel("Password:");
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         registrationPanel.add(passwordLabel, gbc);
-        
+
         JPasswordField passwordField = new JPasswordField();
         passwordField.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 1;
@@ -57,7 +56,7 @@ public class Registration extends JFrame {
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         registrationPanel.add(confirmPasswordLabel, gbc);
-        
+
         JPasswordField confirmPasswordField = new JPasswordField();
         confirmPasswordField.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 1;
@@ -66,7 +65,7 @@ public class Registration extends JFrame {
 
         JButton registerButton = new JButton("Register");
         styleButton(registerButton);
-        
+
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 3;
@@ -81,17 +80,19 @@ public class Registration extends JFrame {
                 String confirmPassword = new String(confirmPasswordField.getPassword());
 
                 if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Please fill in all fields", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 } else if (!password.equals(confirmPassword)) {
                     JOptionPane.showMessageDialog(null, "Passwords do not match", "Error", JOptionPane.ERROR_MESSAGE);
                 } else if (validateUsername(username)) {
                     JOptionPane.showMessageDialog(null, "Username already exists", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
-                   
+
                     String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
                     if (addUser(username, hashedPassword)) {
-                        JOptionPane.showMessageDialog(null, "Registration successful", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        dispose(); 
+                        JOptionPane.showMessageDialog(null, "Registration successful", "Success",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, "Registration failed", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -113,12 +114,12 @@ public class Registration extends JFrame {
     private boolean validateUsername(String username) {
         String query = "SELECT * FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/sudoku", "root", "");
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next(); 
+                return rs.next();
             }
 
         } catch (SQLException ex) {
@@ -130,13 +131,13 @@ public class Registration extends JFrame {
     private boolean addUser(String username, String hashedPassword) {
         String query = "INSERT INTO users (username, password) VALUES (?, ?)";
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/sudoku", "root", "");
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);
             stmt.setString(2, hashedPassword);
 
             int rows = stmt.executeUpdate();
-            return rows > 0; 
+            return rows > 0;
 
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -145,7 +146,7 @@ public class Registration extends JFrame {
     }
 
     private void styleButton(JButton button) {
-        
+
         button.setOpaque(false);
         button.setContentAreaFilled(false);
         button.setBorderPainted(false);

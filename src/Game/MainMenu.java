@@ -6,16 +6,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainMenu extends JPanel {
-    private App app; 
+    private App app;
 
     public MainMenu(App app, String username) {
-        this.app = app; 
+        this.app = app;
         setLayout(new BorderLayout());
 
         JMenuBar menuBar = new JMenuBar();
 
         JMenu userMenu = new JMenu("User: " + username);
-        menuBar.add(Box.createHorizontalGlue()); 
+        menuBar.add(Box.createHorizontalGlue());
         menuBar.add(userMenu);
 
         JMenu logoutMenu = new JMenu("Logout");
@@ -26,15 +26,15 @@ public class MainMenu extends JPanel {
 
         logoutMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                
-                app.setUsername(null); 
-                
+
+                app.setUsername(null);
+
                 app.showOtherPanel("login");
-                
-                JOptionPane.showMessageDialog(null, "Logged out successfully", "Logout", JOptionPane.INFORMATION_MESSAGE);
+
+                JOptionPane.showMessageDialog(null, "Logged out successfully", "Logout",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
-
 
         setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         add(menuBar, BorderLayout.NORTH);
@@ -48,7 +48,7 @@ public class MainMenu extends JPanel {
 
         JButton playButton = new JButton("Play Sudoku");
         styleButton(playButton);
-        
+
         playButton.addActionListener(e -> {
             CardLayout layout = (CardLayout) app.getMainFrame().getContentPane().getLayout();
             layout.show(app.getMainFrame().getContentPane(), "playSudoku");
@@ -57,7 +57,7 @@ public class MainMenu extends JPanel {
 
         JButton solverButton = new JButton("Sudoku Solver");
         styleButton(solverButton);
-        
+
         solverButton.addActionListener(e -> {
             CardLayout layout = (CardLayout) app.getMainFrame().getContentPane().getLayout();
             layout.show(app.getMainFrame().getContentPane(), "sudokuSolver");
@@ -67,7 +67,7 @@ public class MainMenu extends JPanel {
 
         JButton leaderboardButton = new JButton("Leaderboard");
         styleButton(leaderboardButton);
-        
+
         leaderboardButton.addActionListener(e -> {
             CardLayout layout = (CardLayout) app.getMainFrame().getContentPane().getLayout();
             layout.show(app.getMainFrame().getContentPane(), "leaderboard");
@@ -87,5 +87,5 @@ public class MainMenu extends JPanel {
         int borderRadius = 30;
         button.setUI(new RoundedButtonUI(buttonColor, borderColor, borderRadius));
     }
-    
+
 }

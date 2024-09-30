@@ -177,7 +177,6 @@ public class PlaySudoku extends JPanel {
                         }
                     }
 
-
                     if (hint == 0) {
                         hintBtn.setEnabled(false);
                         hintBtn.setToolTipText("Out of hint");
@@ -193,7 +192,7 @@ public class PlaySudoku extends JPanel {
 
     private void checkCurrentInput() {
         if (puzzleGenerated) {
-            
+
             boolean correct = true;
 
             for (int i = 0; i < 9; i++) {
@@ -224,9 +223,9 @@ public class PlaySudoku extends JPanel {
 
                                 }
                             }
-                        }// else {
-                        //     Board[i][j].setBackground(Color.WHITE);
-                        // }
+                        } // else {
+                          // Board[i][j].setBackground(Color.WHITE);
+                          // }
                     } else {
                         correct = false;
                     }

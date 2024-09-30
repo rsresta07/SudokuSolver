@@ -6,10 +6,10 @@ import java.awt.event.*;
 import java.io.*;
 
 public class SudokuFrame extends JPanel {
-    
+
     public JTextField[][] Board;
-    private JMenuBar menuBar; 
-    private App app; 
+    private JMenuBar menuBar;
+    private App app;
 
     SudokuFrame(App app, String username) {
         this.app = app;
@@ -42,7 +42,7 @@ public class SudokuFrame extends JPanel {
                 JTextField textField = new JTextField();
                 textField.setPreferredSize(new Dimension(40, 40));
                 textField.setHorizontalAlignment(JTextField.CENTER);
-                Board[i][j] = textField; 
+                Board[i][j] = textField;
                 BoardPanel.add(textField);
 
                 if (i % 3 == 2 && j % 3 == 2) {
@@ -65,8 +65,8 @@ public class SudokuFrame extends JPanel {
                         }
 
                         if (e.getKeyChar() >= '1' && e.getKeyChar() <= '9') {
-                            
-                        } else{
+
+                        } else {
                             textField.setText("");
                         }
                     }
@@ -79,26 +79,31 @@ public class SudokuFrame extends JPanel {
 
         JButton resetButton = new JButton("Reset");
         styleButton(resetButton);
-        
+
         JButton solveButton = new JButton("Solve");
         styleButton(solveButton);
-               
+
         backButton.addActionListener(e -> {
             CardLayout layout = (CardLayout) app.getMainFrame().getContentPane().getLayout();
             layout.show(app.getMainFrame().getContentPane(), "mainMenu");
-            app.showOtherPanel("mainMenu"); 
+            app.showOtherPanel("mainMenu");
         });
-        
+
         solveButton.addActionListener(e -> {
-            if (solveSudoku()) {
-                JOptionPane.showMessageDialog(app.getMainFrame(), "Puzzle solved!", "Success",
-                        JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(app.getMainFrame(), "Puzzle is unsolvable.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
+            try {
+                if (solveSudoku()) {
+                    JOptionPane.showMessageDialog(app.getMainFrame(), "Puzzle solved!", "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(app.getMainFrame(), "Puzzle is unsolvable.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(app.getMainFrame(), "Input Sudoku File: " + ex.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-        
+
         resetButton.addActionListener(e -> {
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
@@ -106,12 +111,12 @@ public class SudokuFrame extends JPanel {
                 }
             }
         });
-        
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(solveButton);
         buttonPanel.add(resetButton);
         buttonPanel.add(backButton);
-        
+
         add(BoardPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
@@ -178,7 +183,7 @@ public class SudokuFrame extends JPanel {
 
     private boolean solveSudoku() {
         int[][] puzzle = new int[9][9];
-        
+
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 String value = Board[i][j].getText().trim();
@@ -187,11 +192,11 @@ public class SudokuFrame extends JPanel {
                 }
             }
         }
-        
+
         if (!ValidatePuzzle.validate(puzzle)) {
             return false;
         }
-        
+
         boolean isEmpty = true;
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -201,20 +206,20 @@ public class SudokuFrame extends JPanel {
                 }
             }
         }
-        
+
         if (isEmpty) {
             JOptionPane.showMessageDialog(SudokuFrame.this, "Puzzle is empty.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        
+
         if (SudokuSolver.solve(puzzle)) {
-            
+
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
                     Board[i][j].setText(Integer.toString(puzzle[i][j]));
-                    
+
                     try {
-                        Thread.sleep(30); 
+                        Thread.sleep(30);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
@@ -227,7 +232,7 @@ public class SudokuFrame extends JPanel {
     }
 
     private void styleButton(JButton button) {
-        
+
         button.setOpaque(false);
         button.setContentAreaFilled(false);
         button.setBorderPainted(false);
@@ -239,5 +244,5 @@ public class SudokuFrame extends JPanel {
 
         button.setUI(new RoundedButtonUI(buttonColor, borderColor, borderRadius));
     }
-    
+
 }

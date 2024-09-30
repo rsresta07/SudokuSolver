@@ -8,17 +8,18 @@ import java.sql.SQLException;
 
 public class SudokuDatabase {
     private Connection connection;
-    
-    private String url = "jdbc:mysql://localhost:3306/sudoku";
-    
-    private String username = "root";
-    
-    private String password = "";
+
+    // private String url = "jdbc:mysql://localhost:3306/sudoku";
+
+    // private String username = "root";
+
+    // private String password = "";
 
     public SudokuDatabase() throws SQLException {
-        connection = DriverManager.getConnection(url, username, password);
+        connection = JdbcConn.getConnection();
+        ;
     }
-    
+
     public void saveScore(String username, int score, int time, String difficulty) throws SQLException {
         String query = "INSERT INTO scores (username, score, time_taken, difficulty) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -29,7 +30,7 @@ public class SudokuDatabase {
             stmt.executeUpdate();
         }
     }
-    
+
     public ResultSet getLeaderboard(String difficulty) throws SQLException {
         String query;
         if (difficulty.equals("All")) {
@@ -44,7 +45,6 @@ public class SudokuDatabase {
         return stmt.executeQuery();
     }
 
-    
     public void close() throws SQLException {
         connection.close();
     }

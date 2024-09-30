@@ -6,18 +6,17 @@ import java.util.List;
 import java.util.Random;
 
 public class SudokuGenerator {
-    
+
     public static final int EASY = 40;
-    
+
     public static final int MEDIUM = 30;
-    
+
     public static final int HARD = 20;
 
     public static final int NIGHTMARE = 20;
 
-    
     private int[][] puzzle;
-    
+
     private int[][] solution;
 
     public void generate(int difficulty) {

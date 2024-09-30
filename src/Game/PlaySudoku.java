@@ -237,7 +237,7 @@ public class PlaySudoku extends JPanel {
                 long seconds = (elapsedTime / 1000) % 60;
                 long minutes = (elapsedTime / (1000 * 60)) % 60;
                 long hours = (elapsedTime / (1000 * 60 * 60)) % 24;
-                String message = String.format("Time taken: %02d:%02d:%02d", hours, minutes, seconds);
+                String message = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 
                 timeTaken = elapsedTime;
 

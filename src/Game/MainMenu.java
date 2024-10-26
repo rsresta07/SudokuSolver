@@ -75,6 +75,21 @@ public class MainMenu extends JPanel {
         menuPanel.add(leaderboardButton);
 
         add(menuPanel, BorderLayout.CENTER);
+
+        userMenu.addMenuListener(new javax.swing.event.MenuListener() {
+            @Override
+            public void menuSelected(javax.swing.event.MenuEvent e) {
+                app.showOtherPanel("userProfile"); // Show the User Profile panel
+            }
+
+            @Override
+            public void menuDeselected(javax.swing.event.MenuEvent e) {
+            }
+
+            @Override
+            public void menuCanceled(javax.swing.event.MenuEvent e) {
+            }
+        });
     }
 
     private void styleButton(JButton button) {

@@ -30,7 +30,6 @@ public class App {
         mainFrame.setLayout(cardLayout);
 
         LoginRegistration loginPanel = new LoginRegistration(mainFrame, this);
-
         mainFrame.add(loginPanel, "login");
 
         cardLayout.show(mainFrame.getContentPane(), "login");
@@ -55,10 +54,14 @@ public class App {
 
         sudokuFramePanel = new SudokuFrame(this, getUsername());
 
+        // Add UserProfile panel for future reference
+        JPanel userProfilePanel = new UserProfile(this, getUsername());
+
         mainFrame.add(mainMenuPanel, "mainMenu");
         mainFrame.add(playSudokuPanel, "playSudoku");
         mainFrame.add(sudokuFramePanel, "sudokuSolver");
         mainFrame.add(leaderboardPanel, "leaderboard");
+        mainFrame.add(userProfilePanel, "userProfile"); // Add user profile to the CardLayout
 
         cardLayout.show(mainFrame.getContentPane(), "mainMenu");
     }
@@ -85,9 +88,7 @@ public class App {
         CardLayout layout = (CardLayout) mainFrame.getContentPane().getLayout();
 
         if (panelName.equals("login")) {
-
             JPanel loginPanel = new LoginRegistration(mainFrame, this);
-
             mainFrame.remove(mainFrame.getContentPane().getComponent(0));
             mainFrame.add(loginPanel, "login");
         }

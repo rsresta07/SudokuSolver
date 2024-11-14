@@ -3,9 +3,7 @@ package Game;
 import javax.swing.JOptionPane;
 
 public class ValidatePuzzle {
-
     public static boolean validate(int[][] puzzle) {
-
         for (int i = 0; i < 9; i++) {
             boolean[] used = new boolean[9];
             for (int j = 0; j < 9; j++) {

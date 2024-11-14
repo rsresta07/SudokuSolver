@@ -3,7 +3,10 @@ package Game;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.sql.SQLException;
+
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -14,25 +17,22 @@ public class App {
     private JFrame mainFrame;
     private SudokuFrame sudokuFramePanel;
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            App app = new App();
-            app.createAndShowGUI();
-        });
-    }
+    // Static instance for Singleton
+    private static App instance;
 
-    private void createAndShowGUI() {
+    // Private constructor to prevent instantiation
+    private App() {
         mainFrame = new JFrame("Sudoku Generator and Solver");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(600, 600);
 
+        // CardLayout to manage different panels
         CardLayout cardLayout = new CardLayout();
         mainFrame.setLayout(cardLayout);
 
+        // Initial login panel
         LoginRegistration loginPanel = new LoginRegistration(mainFrame, this);
         mainFrame.add(loginPanel, "login");
-
-        cardLayout.show(mainFrame.getContentPane(), "login");
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int centerX = (int) ((screenSize.getWidth() - mainFrame.getWidth()) / 2);
@@ -40,6 +40,35 @@ public class App {
         mainFrame.setLocation(centerX, centerY);
 
         mainFrame.setVisible(true);
+    }
+
+    // Public method to access the instance of App (Singleton)
+    public static App getInstance() {
+        if (instance == null) {
+            instance = new App(); // Create instance if it doesn't exist
+        }
+        return instance;
+    }
+
+    // Define the main method as required for the program entry point
+    public static void main(String[] args) {
+        // Start the application
+        SwingUtilities.invokeLater(() -> {
+            App app = App.getInstance(); // Get the Singleton instance
+            // Show login screen instead of main menu on startup
+            app.showLoginScreen();
+        });
+    }
+
+    public void showLoginScreen() {
+        CardLayout cardLayout = (CardLayout) mainFrame.getContentPane().getLayout();
+        mainFrame.remove(mainFrame.getContentPane().getComponent(0)); // Remove any existing panel
+
+        // Show the login panel
+        LoginRegistration loginPanel = new LoginRegistration(mainFrame, this);
+        mainFrame.add(loginPanel, "login");
+
+        cardLayout.show(mainFrame.getContentPane(), "login");
     }
 
     public void showMainMenu(String username) {
@@ -95,5 +124,20 @@ public class App {
 
         layout.show(mainFrame.getContentPane(), panelName);
         mainFrame.setJMenuBar(null);
+    }
+
+    public void showAdminDashboard() {
+        try {
+            SudokuDatabase db = new SudokuDatabase();
+            JPanel adminDashboardPanel = new AdminDashboardPanel(db, this);
+            mainFrame.add(adminDashboardPanel, "adminDashboard");
+
+            CardLayout cardLayout = (CardLayout) mainFrame.getContentPane().getLayout();
+            cardLayout.show(mainFrame.getContentPane(), "adminDashboard");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(mainFrame, "Failed to load admin dashboard.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 }

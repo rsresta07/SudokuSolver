@@ -76,10 +76,19 @@ public class LoginRegistration extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String username = usernameTextField.getText();
                 String password = new String(passwordField.getPassword());
-                if (validateLogin(username, password)) {
-                    app.setUsername(username);
-                    app.showMainMenu(username);
 
+                // Get the role of the user after login validation
+                String role = validateLogin(username, password);
+
+                if (role != null) {
+                    app.setUsername(username);
+
+                    // Check if the user is admin or a regular user
+                    if (role.equals("admin")) {
+                        app.showAdminDashboard();
+                    } else {
+                        app.showMainMenu(username);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, "Invalid username or password", "Error",
                             JOptionPane.ERROR_MESSAGE);
@@ -95,24 +104,27 @@ public class LoginRegistration extends JPanel {
 
     }
 
-    private boolean validateLogin(String username, String password) {
+    private String validateLogin(String username, String password) {
         try (Connection conn = JdbcConn.getConnection();
-                PreparedStatement stmt = conn.prepareStatement("SELECT password FROM users WHERE username = ?")) {
+                PreparedStatement stmt = conn.prepareStatement("SELECT password, role FROM users WHERE username = ?")) {
 
             stmt.setString(1, username);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String storedHash = rs.getString("password");
-                    return BCrypt.checkpw(password, storedHash);
-                }
-                return false;
-            }
+                    String role = rs.getString("role");
 
+                    if (BCrypt.checkpw(password, storedHash)) {
+                        return role; // Return the role if login is successful
+                    }
+                }
+                return null; // Login failed
+            }
         } catch (SQLException ex) {
             System.out.println("SQL Exception occurred: " + ex.getMessage());
             ex.printStackTrace();
-            return false;
+            return null;
         }
     }
 

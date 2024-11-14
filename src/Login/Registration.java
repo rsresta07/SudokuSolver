@@ -129,7 +129,7 @@ public class Registration extends JFrame {
     }
 
     private boolean addUser(String username, String hashedPassword) {
-        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
+        String query = "INSERT INTO users (username, password, role) VALUES (?, ?, 'user')";
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/sudoku", "root", "");
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 

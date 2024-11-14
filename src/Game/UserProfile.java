@@ -39,7 +39,7 @@ public class UserProfile extends JPanel {
         int shortestTime = getShortestTime(username);
 
         JLabel gamesPlayedL = new JLabel("Games Played: ");
-        JLabel gamesPlayedLabel = new JLabel(""+ gamesPlayed);
+        JLabel gamesPlayedLabel = new JLabel("" + gamesPlayed);
         gamesPlayedL.setFont(new Font("Arial", Font.BOLD, 18));
         gamesPlayedLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         infoPanel.add(gamesPlayedL);

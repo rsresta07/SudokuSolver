@@ -4,8 +4,6 @@
 This is a Java-based Graphical User Interface (GUI) Sudoku Solver. It provides an interactive interface for solving Sudoku puzzles. It is written in Java and uses a backtracking algorithm to solve the puzzle.
 
 ## Documentation
-
-<<<<<<< HEAD
 -   A user-friendly GUI that allows input of the Sudoku puzzle.
 -   The ability to solve any valid Sudoku puzzle.
 -   Provides a clear message if the puzzle is unsolvable.
@@ -13,7 +11,6 @@ This is a Java-based Graphical User Interface (GUI) Sudoku Solver. It provides a
 -   Support for different levels of difficulty.
 
 ## Admin Password
-
 **Username** : admin1
 **Password** : admin123
 

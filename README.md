@@ -15,10 +15,6 @@ This is a Java-based Graphical User Interface (GUI) Sudoku Solver. It provides a
 **Password** : admin123
 
 ## Algorithm
-
-### SudokuSolver Class
-
-=======
 ###  SudokuSolver Class
 >>>>>>> acbd1dc3025ed61b0c93d0cb2c18929ee49990ee
 The Backtracking Algorithm is implemented in the `SudokuSolver.java`. It's implemented in the private `solve` method.
